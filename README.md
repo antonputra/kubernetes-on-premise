@@ -139,4 +139,35 @@ vim ~/.kube/config
 export CALICO_VER="3.28.1"
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v$CALICO_VER/manifests/tigera-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/antonputra/kubernetes-on-premise/main/calico.yaml
+```
+
+### Join Master
+
+```sh
+kubeadm join 192.168.50.135:6443 --token 91frs1.soriol1w90rjqg5u \
+	--discovery-token-ca-cert-hash sha256:984c077be96832548ca5185268fbc37804b6ce19799c54c53ba1973ead6b611c
+```
+
+### Add Roles
+
+```sh
+kubectl label node node-00 node-role.kubernetes.io/worker=
+```
+
+### Install MetalLB
+
+```sh
+kubectl edit configmap -n kube-system kube-proxy
+
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+mode: "ipvs"
+ipvs:
+  strictARP: true
+
+export METALLB_VER="0.14.8"
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v$METALLB_VER/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/antonputra/kubernetes-on-premise/main/metallb.yaml
 ```
