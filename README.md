@@ -2,13 +2,13 @@
 
 ## Components
 
-- Containerd: 1.7.20
-- Kubeadm
-- Kubernetes: 1.30.3
-- Calico
-- MetalLB
-- Runc: 1.1.13
-- CNI plugins: 1.5.1
+- Kubeadm: `1.30.4`
+- Kubernetes: `1.30.4`
+- Containerd: `1.7.21`
+- Calico: `3.28.1`
+- MetalLB: `0.14.8`
+- Runc: `1.1.14`
+- CNI plugins: `1.5.1`
 
 ## Steps
 
@@ -125,6 +125,13 @@ sudo apt-mark hold kubelet kubeadm kubectl
 sudo kubeadm init --pod-network-cidr=10.0.0.0/16
 ```
 
+### Join Master (Example)
+
+```sh
+sudo kubeadm join 192.168.50.135:6443 --token 91frs1.soriol1w90rjqg5u \
+	--discovery-token-ca-cert-hash sha256:984c077be96832548ca5185268fbc37804b6ce19799c54c53ba1973ead6b611c
+```
+
 ### Copy Kubernetes Config
 
 ```sh
@@ -142,17 +149,20 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v$CALIC
 kubectl apply -f https://raw.githubusercontent.com/antonputra/kubernetes-on-premise/main/calico.yaml
 ```
 
-### Join Master
-
-```sh
-kubeadm join 192.168.50.135:6443 --token 91frs1.soriol1w90rjqg5u \
-	--discovery-token-ca-cert-hash sha256:984c077be96832548ca5185268fbc37804b6ce19799c54c53ba1973ead6b611c
-```
-
 ### Add Roles
 
 ```sh
 kubectl label node node-00 node-role.kubernetes.io/worker=
+kubectl label node node-01 node-role.kubernetes.io/worker=
+kubectl label node node-02 node-role.kubernetes.io/worker=
+```
+
+### Add Labels
+
+```sh
+kubectl label node node-00 node=node-00
+kubectl label node node-01 node=node-01
+kubectl label node node-02 node=node-02
 ```
 
 ### Install MetalLB
