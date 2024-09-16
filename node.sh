@@ -9,7 +9,7 @@ sudo sed -i "s/ubuntu/$HOST_NAME/" /etc/hostname
 sudo sed -i "s/ubuntu/$HOST_NAME/" /etc/hosts
 sudo reboot
 
-export CONTAINERD_VER="1.7.21"
+export CONTAINERD_VER="1.7.22"
 export RUNC_VER="1.1.14"
 export PLUGINS_VER="1.5.1"
 
