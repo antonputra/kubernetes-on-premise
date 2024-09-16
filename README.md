@@ -155,6 +155,7 @@ kubectl apply -f https://raw.githubusercontent.com/antonputra/kubernetes-on-prem
 kubectl label node node-00 node-role.kubernetes.io/worker=
 kubectl label node node-01 node-role.kubernetes.io/worker=
 kubectl label node node-02 node-role.kubernetes.io/worker=
+kubectl label node node-03 node-role.kubernetes.io/worker=
 ```
 
 ### Add Labels
@@ -163,6 +164,7 @@ kubectl label node node-02 node-role.kubernetes.io/worker=
 kubectl label node node-00 node=node-00
 kubectl label node node-01 node=node-01
 kubectl label node node-02 node=node-02
+kubectl label node node-03 node=node-03
 ```
 
 ### Install MetalLB
