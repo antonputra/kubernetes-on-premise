@@ -2,10 +2,10 @@
 
 ## Components
 
-- Kubeadm: `1.30.4`
-- Kubernetes: `1.30.4`
+- Kubeadm: `1.31.1`
+- Kubernetes: `1.31.1`
 - Containerd: `1.7.21`
-- Calico: `3.28.1`
+- Calico: `3.28.2`
 - MetalLB: `0.14.8`
 - Runc: `1.1.14`
 - CNI plugins: `1.5.1`
@@ -41,7 +41,7 @@ free -h
 ### Installing a container runtime (containerd)
 
 ```sh
-export CONTAINERD_VER="1.7.20"
+export CONTAINERD_VER="1.7.22"
 
 curl -L https://github.com/containerd/containerd/releases/download/v$CONTAINERD_VER/containerd-$CONTAINERD_VER-linux-amd64.tar.gz -o containerd-$CONTAINERD_VER-linux-amd64.tar.gz
 sudo tar Cxzvf /usr/local containerd-$CONTAINERD_VER-linux-amd64.tar.gz
@@ -53,7 +53,7 @@ sudo systemctl enable --now containerd
 #### Installing runc
 
 ```sh
-export RUNC_VER="1.1.13"
+export RUNC_VER="1.1.14"
 
 
 curl -L https://github.com/opencontainers/runc/releases/download/v$RUNC_VER/runc.amd64 -o runc.amd64
@@ -109,10 +109,10 @@ sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables ne
 
 ```sh
 sudo apt-get update
-sudo apt-get install -y apt-transport-https ca-certificates curl
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
@@ -143,7 +143,7 @@ vim ~/.kube/config
 ### Installing a Pod network add-on
 
 ```sh
-export CALICO_VER="3.28.1"
+export CALICO_VER="3.28.2"
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v$CALICO_VER/manifests/tigera-operator.yaml
 kubectl apply -f https://raw.githubusercontent.com/antonputra/kubernetes-on-premise/main/calico.yaml
