@@ -2,13 +2,13 @@
 
 ## Components
 
-- Kubeadm: `1.31.1`
-- Kubernetes: `1.31.1`
-- Containerd: `1.7.21`
-- Calico: `3.28.2`
+- Kubeadm: `1.31.2`
+- Kubernetes: `1.31.2`
+- Containerd: `2.0.0`
+- Calico: `3.29.0`
 - MetalLB: `0.14.8`
-- Runc: `1.1.14`
-- CNI plugins: `1.5.1`
+- Runc: `1.2.2`
+- CNI plugins: `1.6.0`
 
 ## Steps
 
@@ -41,7 +41,7 @@ free -h
 ### Installing a container runtime (containerd)
 
 ```sh
-export CONTAINERD_VER="1.7.22"
+export CONTAINERD_VER="2.0.0"
 
 curl -L https://github.com/containerd/containerd/releases/download/v$CONTAINERD_VER/containerd-$CONTAINERD_VER-linux-amd64.tar.gz -o containerd-$CONTAINERD_VER-linux-amd64.tar.gz
 sudo tar Cxzvf /usr/local containerd-$CONTAINERD_VER-linux-amd64.tar.gz
@@ -143,7 +143,7 @@ vim ~/.kube/config
 ### Installing a Pod network add-on
 
 ```sh
-export CALICO_VER="3.28.2"
+export CALICO_VER="3.29.0"
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v$CALICO_VER/manifests/tigera-operator.yaml
 kubectl apply -f https://raw.githubusercontent.com/antonputra/kubernetes-on-premise/main/calico.yaml

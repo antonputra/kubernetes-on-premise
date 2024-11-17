@@ -9,9 +9,9 @@ sudo sed -i "s/ubuntu/$HOST_NAME/" /etc/hostname
 sudo sed -i "s/ubuntu/$HOST_NAME/" /etc/hosts
 sudo reboot
 
-export CONTAINERD_VER="1.7.22"
-export RUNC_VER="1.1.14"
-export PLUGINS_VER="1.5.1"
+export CONTAINERD_VER="2.0.0"
+export RUNC_VER="1.2.2"
+export PLUGINS_VER="1.6.0"
 
 # Disable Swap Memory
 
