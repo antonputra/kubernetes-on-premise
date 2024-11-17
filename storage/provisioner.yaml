@@ -1,0 +1,114 @@
+---
+# Source: provisioner/templates/provisioner.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-provisioner-config
+  namespace: default
+data:
+  storageClassMap: |
+    fast-disks:
+       hostDir: /mnt/disks
+       mountDir:  /mnt/disks 
+       blockCleanerCommand:
+         - "/scripts/shred.sh"
+         - "2"
+       volumeMode: Filesystem
+       fsType: xfs
+       namePattern: "*"
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: local-volume-provisioner
+  namespace: default
+  labels:
+    app: local-volume-provisioner
+spec:
+  selector:
+    matchLabels:
+      app: local-volume-provisioner
+  template:
+    metadata:
+      labels:
+        app: local-volume-provisioner
+    spec:
+      serviceAccountName: local-storage-admin
+      containers:
+      - image: "registry.k8s.io/sig-storage/local-volume-provisioner:v2.7.0"
+        imagePullPolicy: "Always"
+        name: provisioner
+        securityContext:
+          privileged: true
+        env:
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        volumeMounts:
+        - mountPath: /etc/provisioner/config
+          name: provisioner-config
+          readOnly: true
+        - mountPath: /mnt/disks
+          name: fast-disks
+          mountPropagation: "HostToContainer"
+        - mountPath: /dev
+          name: provisioner-dev
+      volumes:
+      - name: provisioner-config
+        configMap:
+          name: local-provisioner-config
+      - name: fast-disks
+        hostPath:
+          path: /mnt/disks
+      - name: provisioner-dev
+        hostPath:
+          path: /dev
+---
+# Source: provisioner/templates/provisioner-service-account.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: local-storage-admin
+  namespace: default
+---
+# Source: provisioner/templates/provisioner-cluster-role-binding.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: local-storage-provisioner-pv-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: local-storage-admin
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: system:persistent-volume-provisioner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: local-storage-provisioner-node-clusterrole
+rules:
+- apiGroups: [ "" ]
+  resources: [ "nodes" ]
+  verbs: [ "get" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: local-storage-provisioner-node-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: local-storage-admin
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: local-storage-provisioner-node-clusterrole
+  apiGroup: rbac.authorization.k8s.io
