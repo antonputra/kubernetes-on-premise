@@ -2,16 +2,20 @@
 
 # Update DNS
 
-export HOST_NAME="control-plane-00"
+export DESIRED_HOST_NAME="control-plane-00"
+export CURRENT_HOST_NAME="ubuntu"
 
 sudo apt update && sudo apt -y upgrade
-sudo sed -i "s/ubuntu/$HOST_NAME/" /etc/hostname
-sudo sed -i "s/ubuntu/$HOST_NAME/" /etc/hosts
+sudo sed -i "s/$CURRENT_HOST_NAME/$DESIRED_HOST_NAME/" /etc/hostname
+sudo sed -i "s/$CURRENT_HOST_NAME/$DESIRED_HOST_NAME/" /etc/hosts
 sudo reboot
 
-export CONTAINERD_VER="2.0.0"
-export RUNC_VER="1.2.2"
-export PLUGINS_VER="1.6.0"
+## Start Installation
+
+export K8S_VER="1.34"
+export CONTAINERD_VER="2.1.4"
+export RUNC_VER="1.3.0"
+export PLUGINS_VER="1.7.1"
 
 # Disable Swap Memory
 
@@ -78,8 +82,8 @@ sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables ne
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v$K8S_VER/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v$K8S_VER/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
