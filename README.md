@@ -2,12 +2,12 @@
 
 ## Components
 
-- Kubernetes: `1.34`
-- Containerd: `2.1.4`
-- Runc: `1.3.0`
-- CNI plugins: `1.7.1`
-- Calico: `3.30.3`
-- MetalLB: `0.15.2`
+- Kubernetes: `1.35`
+- Containerd: `2.2.1`
+- Runc: `1.4.0`
+- CNI plugins: `1.9.0`
+- Calico: `3.30.6`
+- MetalLB: `0.15.3`
 
 ## Steps
 
@@ -41,7 +41,7 @@ free -h
 ### Installing a container runtime (containerd)
 
 ```sh
-export CONTAINERD_VER="2.1.4"
+export CONTAINERD_VER="2.2.1"
 
 curl -L https://github.com/containerd/containerd/releases/download/v$CONTAINERD_VER/containerd-$CONTAINERD_VER-linux-amd64.tar.gz -o containerd-$CONTAINERD_VER-linux-amd64.tar.gz
 sudo tar Cxzvf /usr/local containerd-$CONTAINERD_VER-linux-amd64.tar.gz
@@ -53,7 +53,7 @@ sudo systemctl enable --now containerd
 #### Installing runc
 
 ```sh
-export RUNC_VER="1.3.0"
+export RUNC_VER="1.4.0"
 
 
 curl -L https://github.com/opencontainers/runc/releases/download/v$RUNC_VER/runc.amd64 -o runc.amd64
@@ -63,7 +63,7 @@ sudo install -m 755 runc.amd64 /usr/local/sbin/runc
 #### Installing CNI plugins
 
 ```sh
-export PLUGINS_VER="1.7.1"
+export PLUGINS_VER="1.9.0"
 
 curl -L https://github.com/containernetworking/plugins/releases/download/v$PLUGINS_VER/cni-plugins-linux-amd64-v$PLUGINS_VER.tgz -o cni-plugins-linux-amd64-v$PLUGINS_VER.tgz
 sudo mkdir -p /opt/cni/bin
@@ -108,7 +108,7 @@ sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables ne
 ### Install kubeadm (on all the hosts)
 
 ```sh
-export K8S_VER="1.34"
+export K8S_VER="1.35"
 
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg
@@ -138,7 +138,7 @@ vim ~/.kube/config
 ### Installing a Pod network add-on
 
 ```sh
-export CALICO_VER="3.30.3"
+export CALICO_VER="3.30.6"
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v$CALICO_VER/manifests/tigera-operator.yaml
 
@@ -182,7 +182,7 @@ mode: "ipvs"
 ipvs:
   strictARP: true
 
-export METALLB_VER="0.15.2"
+export METALLB_VER="0.15.3"
 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v$METALLB_VER/config/manifests/metallb-native.yaml
 

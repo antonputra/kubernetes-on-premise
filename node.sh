@@ -12,10 +12,10 @@ sudo reboot
 
 ## Start Installation
 
-export K8S_VER="1.34"
-export CONTAINERD_VER="2.1.4"
-export RUNC_VER="1.3.0"
-export PLUGINS_VER="1.7.1"
+export K8S_VER="1.35"
+export CONTAINERD_VER="2.2.1"
+export RUNC_VER="1.4.0"
+export PLUGINS_VER="1.9.0"
 
 # Disable Swap Memory
 
