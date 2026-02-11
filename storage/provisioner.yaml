@@ -1,11 +1,9 @@
 ---
-# Source: provisioner/templates/provisioner.yaml
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: local-provisioner-config
-  namespace: default
+  namespace: kube-system
 data:
   storageClassMap: |
     fast-disks:
@@ -22,7 +20,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: local-volume-provisioner
-  namespace: default
+  namespace: kube-system
   labels:
     app: local-volume-provisioner
 spec:
@@ -36,55 +34,51 @@ spec:
     spec:
       serviceAccountName: local-storage-admin
       containers:
-      - image: "registry.k8s.io/sig-storage/local-volume-provisioner:v2.7.0"
-        imagePullPolicy: "Always"
-        name: provisioner
-        securityContext:
-          privileged: true
-        env:
-        - name: MY_NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        volumeMounts:
-        - mountPath: /etc/provisioner/config
-          name: provisioner-config
-          readOnly: true
-        - mountPath: /mnt/disks
-          name: fast-disks
-          mountPropagation: "HostToContainer"
-        - mountPath: /dev
-          name: provisioner-dev
+        - image: "registry.k8s.io/sig-storage/local-volume-provisioner:v2.8.0"
+          imagePullPolicy: "Always"
+          name: provisioner
+          securityContext:
+            privileged: true
+          env:
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - mountPath: /etc/provisioner/config
+              name: provisioner-config
+              readOnly: true
+            - mountPath: /mnt/disks
+              name: fast-disks
+              mountPropagation: "HostToContainer"
+            - mountPath: /dev
+              name: provisioner-dev
       volumes:
-      - name: provisioner-config
-        configMap:
-          name: local-provisioner-config
-      - name: fast-disks
-        hostPath:
-          path: /mnt/disks
-      - name: provisioner-dev
-        hostPath:
-          path: /dev
+        - name: provisioner-config
+          configMap:
+            name: local-provisioner-config
+        - name: fast-disks
+          hostPath:
+            path: /mnt/disks
+        - name: provisioner-dev
+          hostPath:
+            path: /dev
 ---
-# Source: provisioner/templates/provisioner-service-account.yaml
-
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: local-storage-admin
-  namespace: default
+  namespace: kube-system
 ---
-# Source: provisioner/templates/provisioner-cluster-role-binding.yaml
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: local-storage-provisioner-pv-binding
-  namespace: default
+  namespace: kube-system
 subjects:
-- kind: ServiceAccount
-  name: local-storage-admin
-  namespace: default
+  - kind: ServiceAccount
+    name: local-storage-admin
+    namespace: kube-system
 roleRef:
   kind: ClusterRole
   name: system:persistent-volume-provisioner
@@ -95,19 +89,19 @@ kind: ClusterRole
 metadata:
   name: local-storage-provisioner-node-clusterrole
 rules:
-- apiGroups: [ "" ]
-  resources: [ "nodes" ]
-  verbs: [ "get" ]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: local-storage-provisioner-node-binding
-  namespace: default
+  namespace: kube-system
 subjects:
-- kind: ServiceAccount
-  name: local-storage-admin
-  namespace: default
+  - kind: ServiceAccount
+    name: local-storage-admin
+    namespace: kube-system
 roleRef:
   kind: ClusterRole
   name: local-storage-provisioner-node-clusterrole
