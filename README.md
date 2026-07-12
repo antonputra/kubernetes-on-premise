@@ -2,12 +2,12 @@
 
 ## Components
 
-- Kubernetes: `1.35`
-- Containerd: `2.2.1`
-- Runc: `1.4.0`
-- CNI plugins: `1.9.0`
-- Calico: `3.30.6`
-- MetalLB: `0.15.3`
+- Kubernetes: `1.36`
+- Containerd: `2.3.3`
+- Runc: `1.5.0`
+- CNI plugins: `1.9.1`
+- Calico: `3.32.1`
+- MetalLB: `0.16.1`
 
 ## Steps
 
@@ -34,14 +34,14 @@ sudo reboot
 
 ```sh
 sudo swapoff -a
-sudo sed -i 's/\/swap.img/#\/swap.img/' /etc/fstab
+sudo sed -i '/\sswap\s/ s/^#*/#/' /etc/fstab
 free -h
 ```
 
 ### Installing a container runtime (containerd)
 
 ```sh
-export CONTAINERD_VER="2.2.1"
+export CONTAINERD_VER="2.3.3"
 
 curl -L https://github.com/containerd/containerd/releases/download/v$CONTAINERD_VER/containerd-$CONTAINERD_VER-linux-amd64.tar.gz -o containerd-$CONTAINERD_VER-linux-amd64.tar.gz
 sudo tar Cxzvf /usr/local containerd-$CONTAINERD_VER-linux-amd64.tar.gz
@@ -53,8 +53,7 @@ sudo systemctl enable --now containerd
 #### Installing runc
 
 ```sh
-export RUNC_VER="1.4.0"
-
+export RUNC_VER="1.5.0"
 
 curl -L https://github.com/opencontainers/runc/releases/download/v$RUNC_VER/runc.amd64 -o runc.amd64
 sudo install -m 755 runc.amd64 /usr/local/sbin/runc
@@ -63,7 +62,7 @@ sudo install -m 755 runc.amd64 /usr/local/sbin/runc
 #### Installing CNI plugins
 
 ```sh
-export PLUGINS_VER="1.9.0"
+export PLUGINS_VER="1.9.1"
 
 curl -L https://github.com/containernetworking/plugins/releases/download/v$PLUGINS_VER/cni-plugins-linux-amd64-v$PLUGINS_VER.tgz -o cni-plugins-linux-amd64-v$PLUGINS_VER.tgz
 sudo mkdir -p /opt/cni/bin
@@ -108,7 +107,7 @@ sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables ne
 ### Install kubeadm (on all the hosts)
 
 ```sh
-export K8S_VER="1.35"
+export K8S_VER="1.36"
 
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg
@@ -138,7 +137,7 @@ vim ~/.kube/config
 ### Installing a Pod network add-on
 
 ```sh
-export CALICO_VER="3.30.6"
+export CALICO_VER="3.32.1"
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v$CALICO_VER/manifests/tigera-operator.yaml
 
@@ -182,7 +181,7 @@ mode: "ipvs"
 ipvs:
   strictARP: true
 
-export METALLB_VER="0.15.3"
+export METALLB_VER="0.16.1"
 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v$METALLB_VER/config/manifests/metallb-native.yaml
 
